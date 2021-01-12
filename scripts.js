@@ -5,6 +5,8 @@ const ranges = document.querySelectorAll('.player__slider');
 const progress = document.querySelector('.progress');
 const progressBar = document.querySelector('.progress__filled');
 
+const player = document.querySelector('.player');
+
 // fuctions
 
 playVideo = () => {
@@ -15,7 +17,6 @@ playVideo = () => {
         video.pause();
         toggleButton.textContent = '►';
     }
-
 }
 
 function skip() {
@@ -34,9 +35,17 @@ function progressUpdate() {
 function scrub(e) {
     const scrubTime = (e.offsetX / progress.offsetWidth) * video.duration;
     video.currentTime = scrubTime;
-    console.log(scrubTime);
 }
 
+function fullScreen () {
+    if (video.requestFullscreen) {
+        video.requestFullscreen();
+      } else if (video.webkitRequestFullscreen) { /* Safari */
+        video.webkitRequestFullscreen();
+      } else if (video.msRequestFullscreen) { /* IE11 */
+        video.msRequestFullscreen();
+      }
+}
 
 // behaviour
 
@@ -45,12 +54,12 @@ video.addEventListener('timeupdate', progressUpdate);
 toggleButton.addEventListener('click', playVideo);
 skipButtons.forEach(skipButton => skipButton.addEventListener('click', skip));
 ranges.forEach(range => range.addEventListener('change', rangeUpdate));
-ranges.forEach(range => range.addEventListener('mousemove', rangeUpdate));
 
-let mousedown = false;
+let isMouseDown = false;
 
 progress.addEventListener('click', scrub);
-progress.addEventListener('mousemove', (e) => mousedown && scrub(e));
-progress.addEventListener('mousedown', () => mousedown = true);
-progress.addEventListener('mouseup', () => mousedown = false);
+progress.addEventListener('mousemove', (e) => isMouseDown && scrub(e));
+progress.addEventListener('mousedown', () => isMouseDown = true);
+progress.addEventListener('mouseup', () => isMouseDown = false);
 
+video.addEventListener('dblclick', fullScreen);
